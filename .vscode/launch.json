@@ -1,0 +1,42 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'winkioskshell'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=winkioskshell",
+                    "--package=winkioskshell"
+                ],
+                "filter": {
+                    "name": "winkioskshell",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Release executable 'winkioskshell'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=winkioskshell",
+                    "--package=winkioskshell",
+                    "--release"
+                ],
+                "filter": {
+                    "name": "winkioskshell",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

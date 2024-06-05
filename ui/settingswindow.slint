@@ -1,0 +1,152 @@
+import { Button, VerticalBox, LineEdit, HorizontalBox, StandardButton, ComboBox, Palette } from "std-widgets.slint";
+
+export component SettingsWindow inherits Dialog {
+    title: title_text;
+
+    in-out property <string> title_text;
+    in-out property <bool> is_admin;
+    in-out property <[string]> users;
+    in-out property <string> selected_user;
+    in-out property <string> client_application;
+    in-out property <string> app_password;
+    in-out property <string> user_info;
+    callback user_selected(string);
+    callback search_clicked();
+    callback request_save_close();
+    callback request_cancel_close();
+
+    in-out property <string> dialog_text;
+    callback popup_confirmed;
+    callback show_confirm_popup;
+
+    show_confirm_popup => { confirm_popup.show(); }
+
+    confirm_popup := PopupWindow {
+        Rectangle {
+            background: Palette.background;
+            border-color: Palette.border;
+            border-width: 1px;
+        }
+        
+        confirm_popup_layout := Dialog {
+            VerticalLayout {
+                spacing: 2px;
+                
+                Text {
+                    text: "Kiosk settings";
+                }
+
+                Rectangle {
+                    border-width: 1px;
+                    border-color: black;
+                    height: 1px;
+                    min-width: 100px;
+                }
+        
+                Text {
+                    text: dialog_text;
+                    wrap: word-wrap;
+                }
+            }
+
+            StandardButton { kind: yes; clicked => { root.popup_confirmed(); } }
+            StandardButton { kind: no; }
+        }
+    }
+
+    callback show_message_box;
+    callback confirm_message_box;
+
+    show_message_box => { confirm_message_box.show(); }
+
+    confirm_message_box := PopupWindow {
+        x: 100px;
+        y: 100px;
+
+        Rectangle {
+            background: Palette.background;
+            border-color: Palette.border;
+            border-width: 1px;
+        }
+
+        confirm_message_box_layout := Dialog {
+            VerticalLayout {
+                spacing: 2px;
+
+                Text {
+                    text: "Kiosk settings";
+                }
+
+                Rectangle {
+                    border-width: 1px;
+                    border-color: black;
+                    height: 1px;
+                    min-width: 100px;
+                }
+        
+                Text {
+                    text: dialog_text;
+                    wrap: word-wrap;
+                }
+            }
+
+            StandardButton { kind: ok; }
+        }
+    }
+    
+
+    VerticalBox {
+        Text {
+            text: "Kiosk user";
+            visible <=> is_admin;
+        }
+        ComboBox {
+            model: users;
+            visible <=> is_admin;
+            selected => {root.user_selected(self.current-value);}
+            current-value <=> selected_user;
+        }
+        Text {
+            text <=> user_info;
+            visible <=> is_admin;
+        }
+        Text {
+            text: "Client application";
+        }
+        HorizontalBox {
+            LineEdit {
+                text <=> client_application;
+                width: 300px;
+            }
+            Button {
+                text: "...";
+                clicked => {root.search_clicked();}
+            }
+        }
+
+        HorizontalBox {
+            Text {
+                text: "Password: ";
+            }
+            LineEdit {
+                text <=> app_password;
+                input-type: password;
+            }
+        }
+
+        Text {}
+
+        HorizontalBox {
+            StandardButton
+            {
+                kind: ok;
+                clicked => {root.request_save_close();}
+            }
+            StandardButton
+            {
+                kind: cancel;
+                clicked => {root.request_cancel_close();}
+            }
+        }
+    }
+}
