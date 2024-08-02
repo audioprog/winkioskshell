@@ -4,15 +4,15 @@ edition = "2021"
 build = "build.rs"
 
 [dependencies]
-slint = "1.6"
+slint = "1.7"
 dirs = "5.0"
 winreg = "0.52"
-lazy_static = "1.4"
+lazy_static = "1.5"
 rfd = "0.14"
 mslnk = "0.1"
-sysinfo = "0.30"
+sysinfo = "0.31"
 whoami = "1.5"
-self-replace = "1.3"
+self-replace = "1.4"
 semver = "1.0"
 reqwest = { version = "0.12", features = ["blocking", "json"] }
 winapi = { version = "0.3", features = ["winnt", "processthreadsapi", "processenv", "securitybaseapi"] }

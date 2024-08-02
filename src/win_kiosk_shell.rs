@@ -17,7 +17,7 @@ use crate::{release, win_kiosk_settings};
 slint::slint!{
     import { Button, LineEdit } from "std-widgets.slint";
 
-    export component KioskWindow {
+    export component KioskWindow inherits Window {
         in-out property <string> password_text;
         in-out property <string> version;
 
@@ -91,7 +91,7 @@ impl WinKioskShell {
                 system.refresh_all();
     
                 for (_pid, process) in system.processes() {
-                    if process.name().to_lowercase() == "explorer.exe" {
+                    if process.name().to_ascii_lowercase() == "explorer.exe" {
                         process.kill();
                     } else if let Some(process_name_lower) = client_application_name.as_deref() {
                         let _ = set_focus_to_application(process_name_lower);
