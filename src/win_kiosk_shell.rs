@@ -93,6 +93,8 @@ impl WinKioskShell {
                 for (_pid, process) in system.processes() {
                     if process.name().to_ascii_lowercase() == "explorer.exe" {
                         process.kill();
+                    } else if process.name().to_ascii_lowercase() == "msedge.exe" {
+                        process.kill();
                     } else if let Some(process_name_lower) = client_application_name.as_deref() {
                         let _ = set_focus_to_application(process_name_lower);
                     }
