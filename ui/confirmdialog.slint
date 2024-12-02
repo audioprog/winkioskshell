@@ -1,0 +1,37 @@
+import { StandardButton, VerticalBox, HorizontalBox, Palette } from "std-widgets.slint";
+
+export component ConfirmDialog inherits Dialog {
+    in-out property <string> dialog_text;
+    callback popup_confirmed;
+
+    Rectangle {
+        background: Palette.background;
+        border-color: Palette.border;
+        border-width: 1px;
+    }
+    
+    VerticalBox {
+        spacing: 2px;
+        
+        Text {
+            text: "Kiosk settings";
+        }
+
+        Rectangle {
+            border-width: 1px;
+            border-color: black;
+            height: 1px;
+            min-width: 100px;
+        }
+
+        Text {
+            text: dialog_text;
+            wrap: word-wrap;
+        }
+
+        HorizontalBox {
+            StandardButton { kind: yes; clicked => { root.popup_confirmed(); } }
+            StandardButton { kind: no; }
+        }
+    }
+}

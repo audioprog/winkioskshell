@@ -4,7 +4,11 @@ use regex::Regex;
 
 fn main() {
     embed_resource::compile("app.rc", embed_resource::NONE);
+    slint_build::compile("ui/confirmdialog.slint").unwrap();
+    slint_build::compile("ui/messagebox.slint").unwrap();
     slint_build::compile("ui/settingswindow.slint").unwrap();
+    slint_build::compile("ui/kioskwindow.slint").unwrap();
+    slint_build::compile("ui/main.slint").unwrap();
 
     let semver_regex = Regex::new(r"^v\d+(\.\d+)*$").unwrap();
 

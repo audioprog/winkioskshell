@@ -1,4 +1,6 @@
 import { Button, VerticalBox, LineEdit, HorizontalBox, StandardButton, ComboBox, Palette } from "std-widgets.slint";
+import { ConfirmDialog } from "confirmdialog.slint";
+import { MessageBox } from "messagebox.slint";
 
 export component SettingsWindow inherits Dialog {
     title: title_text;
@@ -16,84 +18,22 @@ export component SettingsWindow inherits Dialog {
     callback request_cancel_close();
 
     in-out property <string> dialog_text;
-    callback popup_confirmed;
     callback show_confirm_popup;
 
-    show_confirm_popup => { confirm_popup.show(); }
+    show_confirm_popup => { confirm_popup.visible = true; }
 
-    confirm_popup := PopupWindow {
-        Rectangle {
-            background: Palette.background;
-            border-color: Palette.border;
-            border-width: 1px;
-        }
-        
-        confirm_popup_layout := Dialog {
-            VerticalLayout {
-                spacing: 2px;
-                
-                Text {
-                    text: "Kiosk settings";
-                }
-
-                Rectangle {
-                    border-width: 1px;
-                    border-color: black;
-                    height: 1px;
-                    min-width: 100px;
-                }
-        
-                Text {
-                    text: dialog_text;
-                    wrap: word-wrap;
-                }
-            }
-
-            StandardButton { kind: yes; clicked => { root.popup_confirmed(); } }
-            StandardButton { kind: no; }
-        }
+    confirm_popup := ConfirmDialog {
+        dialog_text <=> root.dialog_text;
+        popup_confirmed => { root.request_cancel_close(); }
     }
 
     callback show_message_box;
-    callback confirm_message_box;
 
     show_message_box => { confirm_message_box.show(); }
 
-    confirm_message_box := PopupWindow {
-        x: 100px;
-        y: 100px;
-
-        Rectangle {
-            background: Palette.background;
-            border-color: Palette.border;
-            border-width: 1px;
-        }
-
-        confirm_message_box_layout := Dialog {
-            VerticalLayout {
-                spacing: 2px;
-
-                Text {
-                    text: "Kiosk settings";
-                }
-
-                Rectangle {
-                    border-width: 1px;
-                    border-color: black;
-                    height: 1px;
-                    min-width: 100px;
-                }
-        
-                Text {
-                    text: dialog_text;
-                    wrap: word-wrap;
-                }
-            }
-
-            StandardButton { kind: ok; }
-        }
+    confirm_message_box := MessageBox {
+        dialog_text <=> root.dialog_text;
     }
-    
 
     VerticalBox {
         Text {

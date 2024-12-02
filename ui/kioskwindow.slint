@@ -1,0 +1,48 @@
+import { Button, LineEdit } from "std-widgets.slint";
+
+export component KioskWindow inherits Window {
+    in-out property <string> password_text;
+    in-out property <string> version;
+
+    callback close();
+    callback settings();
+    callback start_app();
+    callback reboot();
+
+    Rectangle {
+        background: black;
+        width: 100%;
+        height: 100%;
+
+        VerticalLayout {
+            width: 10%;
+            height: 10%;
+
+            Text {
+                text: version;
+            }
+
+            LineEdit {
+                text <=> password_text;
+                input-type: password;
+            }
+
+            Button {
+                text: "X";
+                clicked => {root.close();}
+            }
+            Button {
+                text: "S";
+                clicked => {root.settings();}
+            }
+            Button {
+                text: "Start";
+                clicked => {root.start_app();}
+            }
+            Button {
+                text: "🔁";
+                clicked => {root.reboot();}
+            }
+        }
+    }
+}
