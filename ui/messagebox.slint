@@ -1,35 +1,16 @@
-import { StandardButton, VerticalBox, HorizontalBox, Palette } from "std-widgets.slint";
+import { StandardButton } from "std-widgets.slint";
 
-export component MessageBox inherits PopupWindow {
-    in-out property <string> dialog_text;
+export component MessageBox inherits Dialog {
+    
+    property <string> dialog_text: "DialogTest";
 
-    Rectangle {
-        background: Palette.background;
-        border-color: Palette.border;
-        border-width: 1px;
+    always-on-top: true;
+
+    Text {
+        text: dialog_text;
+        horizontal-alignment: center;
+        vertical-alignment: center;
     }
 
-    VerticalBox {
-        spacing: 2px;
-
-        Text {
-            text: "Kiosk settings";
-        }
-
-        Rectangle {
-            border-width: 1px;
-            border-color: black;
-            height: 1px;
-            min-width: 100px;
-        }
-
-        Text {
-            text: dialog_text;
-            wrap: word-wrap;
-        }
-
-        HorizontalBox {
-            StandardButton { kind: ok; }
-        }
-    }
+    StandardButton { kind: ok; }
 }

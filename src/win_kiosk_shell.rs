@@ -7,6 +7,7 @@ use slint::{self, ComponentHandle};
 use sysinfo::System;
 use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
 
+#[cfg(target_os = "windows")]
 use winapi::um::winuser::{FindWindowA, SetForegroundWindow, GetForegroundWindow};
 use std::ffi::CString;
 use std::ptr::null_mut;
@@ -47,6 +48,7 @@ impl WinKioskShell {
                     } else if process.name().to_ascii_lowercase() == "msedge.exe" {
                         process.kill();
                     } else if let Some(process_name_lower) = client_application_name.as_deref() {
+                        #[cfg(target_os = "windows")]
                         let _ = set_focus_to_application(process_name_lower);
                     }
                 }
@@ -65,6 +67,7 @@ impl WinKioskShell {
                 let check = ConfigManager::load_config(&"").password.clone();
                 if check.is_none() || check.unwrap() == password {
                     let _ = ui.hide();
+                    let _ = slint::quit_event_loop();
                 }
             }
         });
@@ -114,10 +117,12 @@ impl WinKioskShell {
         process_worker.join().unwrap();
 
         let mut proc = self.process.lock().unwrap();
+        #[cfg(target_os = "windows")]
         let _ = proc.wait();
     }
 }
 
+#[cfg(target_os = "windows")]
 fn set_focus_to_application(application_name: &str) -> Result<(), String> {
     unsafe {
         let window_name = CString::new(application_name).unwrap();

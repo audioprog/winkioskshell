@@ -1,7 +1,13 @@
-use std::{env, error::Error, fs, os::windows::process::CommandExt, path::Path, process::{Command, Output, Stdio}, rc::Rc, str::FromStr};
+use std::{env, error::Error, fs, path::Path, process::{Command, Output, Stdio}, rc::Rc, str::FromStr};
 use slint::{self, ComponentHandle, ModelRc, SharedString, VecModel};
+
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
+#[cfg(target_os = "windows")]
 use winreg::{enums::KEY_WRITE, RegKey};
+#[cfg(target_os = "windows")]
 use mslnk::ShellLink;
+#[cfg(target_os = "windows")]
 use winapi::um::winbase::CREATE_NO_WINDOW;
 
 use crate::{mainconfig::ConfigManager, win_kiosk_shell::check_for_update};
@@ -110,8 +116,7 @@ impl WinKioskSettings {
     }
     
     fn message_box(ui: &SettingsWindow, err: &str) {
-        ui.set_dialog_text(err.into());
-        ui.invoke_show_message_box();
+        
     }
 }
 
@@ -124,6 +129,7 @@ fn get_info(user_name: &str) -> String {
     }
 }
 
+#[cfg(target_os = "windows")]
 fn write_user_shell(username: &str, client_application_path: &str) -> Result<(), Box<dyn Error>> {
     let system_drive = env::var("SystemDrive")?;
     let user_path = Path::new(&system_drive).join("users").join(username);
@@ -148,7 +154,14 @@ fn write_user_shell(username: &str, client_application_path: &str) -> Result<(),
 
     Ok(())
 }
+#[cfg(not(target_os = "windows"))]
+fn write_user_shell(username: &str, client_application_path: &str) -> Result<(), Box<dyn Error>> {
+    let home_dir = dirs::home_dir().unwrap();
 
+    Ok(())
+}
+
+#[cfg(target_os = "windows")]
 fn list_local_users() -> Result<ModelRc<SharedString>, std::io::Error> {
     let system_drive = env::var("SystemDrive").unwrap();
     let user_path = Path::new(&system_drive).join("users");
@@ -172,6 +185,12 @@ fn list_local_users() -> Result<ModelRc<SharedString>, std::io::Error> {
 
     Ok(ModelRc::from(Rc::new(local_users)))
 }
+#[cfg(not(target_os = "windows"))]
+fn list_local_users() -> Result<ModelRc<SharedString>, std::io::Error> {
+    let local_users: VecModel<SharedString> = VecModel::default();
+
+    Ok(ModelRc::from(Rc::new(local_users)))
+}
 
 fn is_local_user(user_name: &str) -> bool {
     let ps_script = format!("$user = Get-LocalUser -Name '{}'; if($user -ne $null) {{ $true }} else {{ $false }}", user_name);
@@ -187,11 +206,19 @@ fn is_local_user(user_name: &str) -> bool {
 }
 
 fn run_powershell_script(script: &str) -> std::io::Result<Output> {
+    #[cfg(target_os = "windows")]
     let output = Command::new("powershell")
         .args(&["-Command", script])
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .creation_flags(CREATE_NO_WINDOW) // Prevents the creation of a window
+        .output();
+
+    #[cfg(not(target_os = "windows"))]
+    let output = Command::new("powershell")
+        .args(&["-Command", script])
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
         .output();
 
     output

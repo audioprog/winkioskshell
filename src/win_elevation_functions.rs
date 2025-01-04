@@ -1,19 +1,23 @@
+#[cfg(target_os = "windows")]
 use winapi::um::errhandlingapi::GetLastError;
+#[cfg(target_os = "windows")]
 use winapi::um::processthreadsapi::{GetCurrentProcess, OpenProcessToken};
+#[cfg(target_os = "windows")]
 use winapi::um::securitybaseapi::GetTokenInformation;
+#[cfg(target_os = "windows")]
 use winapi::um::winnt::{TokenElevation, TokenElevationType, TokenElevationTypeLimited, TOKEN_ELEVATION, TOKEN_ELEVATION_TYPE, TOKEN_QUERY};
+#[cfg(target_os = "windows")]
 use winapi::um::handleapi::{CloseHandle, INVALID_HANDLE_VALUE};
 
-
 #[derive(Default)]
-pub struct WinElevationFunctions {
-}
+pub struct WinElevationFunctions {}
 
 impl WinElevationFunctions {
+    #[cfg(target_os = "windows")]
     pub fn is_admin() -> bool {
         unsafe {
             let mut handle = INVALID_HANDLE_VALUE;
-            if OpenProcessToken(winapi::um::processthreadsapi::GetCurrentProcess(), TOKEN_QUERY, &mut handle) == 0 {
+            if OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &mut handle) == 0 {
                 return false;
             }
 
@@ -39,6 +43,12 @@ impl WinElevationFunctions {
         }
     }
 
+    #[cfg(not(target_os = "windows"))]
+    pub fn is_admin() -> bool {
+        true
+    }
+
+    #[cfg(target_os = "windows")]
     pub fn is_token_elevation_type_limited() -> Result<bool, u32> {
         unsafe {
             let mut token = INVALID_HANDLE_VALUE;
@@ -70,6 +80,12 @@ impl WinElevationFunctions {
         }
     }
 
+    #[cfg(not(target_os = "windows"))]
+    pub fn is_token_elevation_type_limited() -> Result<bool, u32> {
+        Ok(true)
+    }
+}
+
     // pub fn is_token_elevation_type_limited_x() -> Result<bool, u32> {
     //     unsafe {
     //         let mut token = INVALID_HANDLE_VALUE;
@@ -98,4 +114,4 @@ impl WinElevationFunctions {
     //         Ok(elevation_type == TokenElevationTypeLimited as u32)
     //     }
     // }
-}
+//}

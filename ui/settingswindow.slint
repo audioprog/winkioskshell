@@ -20,21 +20,6 @@ export component SettingsWindow inherits Dialog {
     in-out property <string> dialog_text;
     callback show_confirm_popup;
 
-    show_confirm_popup => { confirm_popup.visible = true; }
-
-    confirm_popup := ConfirmDialog {
-        dialog_text <=> root.dialog_text;
-        popup_confirmed => { root.request_cancel_close(); }
-    }
-
-    callback show_message_box;
-
-    show_message_box => { confirm_message_box.show(); }
-
-    confirm_message_box := MessageBox {
-        dialog_text <=> root.dialog_text;
-    }
-
     VerticalBox {
         Text {
             text: "Kiosk user";

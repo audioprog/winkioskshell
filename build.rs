@@ -1,9 +1,13 @@
+#[cfg(target_os = "windows")]
 extern crate embed_resource;
+
 use std::{env, process::Command};
 use regex::Regex;
 
 fn main() {
+    #[cfg(target_os = "windows")]
     embed_resource::compile("app.rc", embed_resource::NONE);
+
     slint_build::compile("ui/confirmdialog.slint").unwrap();
     slint_build::compile("ui/messagebox.slint").unwrap();
     slint_build::compile("ui/settingswindow.slint").unwrap();

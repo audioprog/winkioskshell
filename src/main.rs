@@ -16,8 +16,17 @@ fn main() {
     let client_application = config.client_application;
     {
         let app_path = PathBuf::from(if let Some(app) = client_application {app.clone()} else {"".to_owned()});
+        #[cfg(target_os = "windows")]
         let child_option = if app_path.exists() {
             Some(std::process::Command::new(app_path)
+                .spawn()
+                .expect("The application could not be started."))
+        } else {
+            None
+        };
+        #[cfg(not(target_os = "windows"))]
+        let child_option = if app_path.exists() {
+            Some(std::process::Command::new("/bin/sh")
                 .spawn()
                 .expect("The application could not be started."))
         } else {
